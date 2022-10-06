@@ -11,12 +11,24 @@
     >
  <template v-slot:body-cell-actions="props">
             <q-td :props="props">
-              <q-btn color="light-blue-12" label="Listele" @click="GetDialog()"></q-btn>
+              <q-btn color="light-blue-12" label="Listele" @click="GetDialog(props)"></q-btn>
             </q-td>
           </template>
-          <template v-slot:top-right>
-        <q-btn color="secondary" :disable="loading" label="Planlanmış Eğitimler"  />
-        <q-btn class="q-ml-sm" color="info" :disable="loading" label="Gerçekleşen Eğitimler" />
+          <template v-slot:top>
+      <div class="row justify-end" style="width:100%">
+        <div class="column">
+          <q-btn :label="ActiveMenu.Name" style="width:15rem;" :style="{'background':ActiveMenu.Color,'color':ActiveMenu.textColor}">
+            <q-menu fit>
+              <q-list style="min-width: 100px">
+            <q-item clickable v-for="item in menu" v-close-popup :key="item.Name" @click="ChangeMenu(item)">
+              <q-item-section >{{item.Name}}</q-item-section>
+            </q-item>
+            </q-list>
+
+            </q-menu>
+          </q-btn>
+        </div>
+      </div>
         <q-space />
 
       </template>
@@ -24,14 +36,16 @@
   </q-table>
        </div>
     </q-page>
-<EducationPopup :dialog="dialog" v-if="dialog" @closePopup="closeDialog"></EducationPopup>
+<EducationPopup :dialog="dialog" :item="selectedItem" v-if="dialog" @closePopup="closeDialog"></EducationPopup>
 </template>
 <script>
-function GetDialog () {
+function GetDialog (props) {
   dialog.value = !dialog.value
+  this.selectedItem = props
 }
-import { ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import EducationPopup from 'src/components/EducationPopup.vue'
+
 const columns = [
   {
     name: 'name',
@@ -90,7 +104,41 @@ const rows = [
 function closeDialog () {
   dialog.value = false
 }
+const menu = reactive([
+  {
+    Id: 1,
+    Name: 'Planlanmış Eğitimler',
+    isActive: false,
+    Color: 'purple',
+    textColor: 'white'
+  },
+  {
+    Id: 2,
+    Name: 'Gerçekleşen Eğitimler',
+    isActive: false,
+    Color: 'Blue',
+    textColor: 'White'
+  },
+  {
+    Id: 3,
+    Name: 'Yaklaşan Eğitimler',
+    isActive: true,
+    Color: 'Red',
+    textColor: 'Black'
+  }
+])
+const ActiveMenu = computed(() => {
+  return menu.find((x) => x.isActive === true)
+})
+function ChangeMenu (item) {
+  const menuItem = this.menu.find((x) => x.Id === this.ActiveMenu.Id)
+  menuItem.isActive = false
+  const activeMenu = this.menu.find((x) => x.Id === item.Id)
+  activeMenu.isActive = true
+}
+console.log(ActiveMenu)
 const dialog = ref(false)
+const selectedItem = reactive()
 export default {
   setup () {
     return {
@@ -98,7 +146,11 @@ export default {
       rows,
       dialog,
       GetDialog,
-      closeDialog
+      closeDialog,
+      selectedItem,
+      menu,
+      ActiveMenu,
+      ChangeMenu
     }
   },
   components: { EducationPopup }
