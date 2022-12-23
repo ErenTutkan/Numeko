@@ -3,7 +3,9 @@
     clickable
     tag="a"
     :to="link"
-  >
+    active-class="bg-grey-4 text-red-8"
+
+    >
     <q-item-section
       v-if="icon"
       avatar
