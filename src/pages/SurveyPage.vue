@@ -4,12 +4,12 @@
             <div class="row justify-center q-pa-md ">
                 <div class="col-md-4 bg-white   rounded-borders text-center">
                     <q-form
-                    @submit="postSurvey"
+                    @submit="confirm"
                         class="q-gutter-md q-pa-md"
                     >
                         <div class="q-mt-md">
                             <div class="label">{{firstQuestion}}</div>
-                            <q-select v-model="firstQuestionAnswer" :options="options"   :label="firstQuestion" filled />
+                            <q-select v-model="firstQuestionAnswer" :options="options" :disable="firstQuestionIsNotNull"  :label="firstQuestion" filled />
                         </div>
                         <div class="q-mt-md" v-for="item in questions" :key="item">
                             <div class="label" >
@@ -33,6 +33,7 @@ export default {
     return {
       firstQuestion: '',
       firstQuestionAnswer: '',
+      firstQuestionIsNotNull: false,
       questions: [
       ],
       vantaEffect: null,
@@ -71,6 +72,17 @@ export default {
           })
         }
       })
+    },
+    confirm () {
+      this.$q.dialog({
+        message: 'Anket Değerlendirme Formunu Göndermek İstiyor musunuz? Onaylandıktan sonra anket değerlendirme formu tekrar değiştirilemez.',
+        cancel: 'İptal',
+        persistent: true,
+        ok: 'Onayla'
+
+      }).onOk(() => {
+        this.postSurvey()
+      })
     }
   },
   async mounted () {
@@ -85,6 +97,7 @@ export default {
     await this.$api.get('Survey?educationPlanId=' + id).then(({ data }) => {
       this.firstQuestion = data.firstQuestion
       this.firstQuestionAnswer = data.firstQuestionAnswer
+      this.firstQuestionIsNotNull = data.firstQuestionAnswer !== ''
       this.questions.push({
         question: data.twoQuestion,
         answer: data.twoQuestionAnswer,

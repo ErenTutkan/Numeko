@@ -12,7 +12,7 @@
       <div class="row card-text"><div class="col-6 text-blue-6 ">Sertifika Geçerlilik Tarihi</div> <div class="col-6 text-right text-white"><span class="bg-blue-8 round q-pa-xs">{{certificate.certificateValidityDate}}</span> </div> </div>
     </q-card-section>
     <q-card-section class="border">
-      <div class="row card-text"><div class="col-6 text-blue-6 ">Ad Soyad</div> <div class="col-6 text-right "><span >{{certificate.joinNameSurname.toUpperCase()}}</span> </div> </div>
+      <div class="row card-text"><div class="col-6 text-blue-6 ">Ad Soyad</div> <div class="col-6 text-right "><span >{{certificate.joinNameSurname.split("-")[0].toUpperCase()}}</span> </div> </div>
     </q-card-section>
     <q-card-section class="border">
       <div class="row card-text"><div class="col-6 text-blue-6 ">Eğitim Tarihi</div> <div class="col-6 text-right text-white"><span class="bg-green-7 round q-pa-xs">{{certificate.certificateDate}}</span> </div> </div>
